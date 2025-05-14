@@ -1,0 +1,210 @@
+{% extends 'base.html' %}
+
+{% block title %}Dashboard - Incident Response Tool{% endblock %}
+
+{% block content %}
+<div class="container-fluid py-4">
+    <div class="row">
+        <div class="col-lg-3 col-xl-2">
+            <!-- Sidebar navigation -->
+            <div class="list-group mb-4">
+                <a href="{{ url_for('main.dashboard') }}" class="list-group-item list-group-item-action active">
+                    <i class="fas fa-tachometer-alt me-2"></i>Dashboard
+                </a>
+                <a href="{{ url_for('main.new_incident') }}" class="list-group-item list-group-item-action">
+                    <i class="fas fa-plus-circle me-2"></i>New Incident
+                </a>
+                <a href="#" class="list-group-item list-group-item-action">
+                    <i class="fas fa-search me-2"></i>Search Incidents
+                </a>
+                <a href="{{ url_for('main.list_templates') }}" class="list-group-item list-group-item-action">
+                    <i class="fas fa-clipboard-list me-2"></i>Templates
+                </a>
+                <a href="#" class="list-group-item list-group-item-action">
+                    <i class="fas fa-chart-bar me-2"></i>Reports
+                </a>
+                <a href="#" class="list-group-item list-group-item-action">
+                    <i class="fas fa-cog me-2"></i>Settings
+                </a>
+            </div>
+        </div>
+        
+        <div class="col-lg-9 col-xl-10">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h1 class="h3">Dashboard</h1>
+                <a href="{{ url_for('main.new_incident') }}" class="btn btn-primary">
+                    <i class="fas fa-plus-circle me-1"></i> Report New Incident
+                </a>
+            </div>
+            
+            <!-- Status cards -->
+            <div class="row mb-4">
+                <div class="col-md-3 mb-3">
+                    <div class="card text-white bg-danger">
+                        <div class="card-body">
+                            <h5 class="card-title">New</h5>
+                            <p class="card-text h2">{{ incidents|selectattr('status', 'equalto', 'New')|list|length }}</p>
+                            <small>Unassigned incidents</small>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3 mb-3">
+                    <div class="card text-white bg-warning">
+                        <div class="card-body">
+                            <h5 class="card-title">Investigating</h5>
+                            <p class="card-text h2">{{ incidents|selectattr('status', 'equalto', 'Investigating')|list|length }}</p>
+                            <small>Active incidents</small>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3 mb-3">
+                    <div class="card text-white bg-success">
+                        <div class="card-body">
+                            <h5 class="card-title">Resolved</h5>
+                            <p class="card-text h2">{{ incidents|selectattr('status', 'equalto', 'Resolved')|list|length }}</p>
+                            <small>Completed incidents</small>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3 mb-3">
+                    <div class="card text-white bg-secondary">
+                        <div class="card-body">
+                            <h5 class="card-title">Total</h5>
+                            <p class="card-text h2">{{ incidents|length }}</p>
+                            <small>All incidents</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Recent incidents -->
+            <div class="card mb-4">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <h5 class="mb-0">Recent Incidents</h5>
+                    <div class="btn-group">
+                        <button type="button" class="btn btn-sm btn-outline-secondary">All</button>
+                        <button type="button" class="btn btn-sm btn-outline-secondary">New</button>
+                        <button type="button" class="btn btn-sm btn-outline-secondary">Investigating</button>
+                        <button type="button" class="btn btn-sm btn-outline-secondary">Resolved</button>
+                    </div>
+                </div>
+                <div class="card-body p-0">
+                    <div class="table-responsive">
+                        <table class="table table-hover align-middle mb-0">
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Title</th>
+                                    <th>Type</th>
+                                    <th>Severity</th>
+                                    <th>Status</th>
+                                    <th>Created</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% if incidents %}
+                                    {% for incident in incidents %}
+                                    <tr>
+                                        <td>{{ incident.id }}</td>
+                                        <td>
+                                            <a href="{{ url_for('main.view_incident', incident_id=incident.id) }}">
+                                                {{ incident.title }}
+                                            </a>
+                                        </td>
+                                        <td>{{ incident.incident_type }}</td>
+                                        <td>
+                                            <span class="badge severity-{{ incident.severity.lower() }}">
+                                                {{ incident.severity }}
+                                            </span>
+                                        </td>
+                                        <td>
+                                            <span class="badge status-{{ incident.status.lower() }}">
+                                                {{ incident.status }}
+                                            </span>
+                                        </td>
+                                        <td>{{ incident.created_at.strftime('%Y-%m-%d %H:%M') }}</td>
+                                        <td>
+                                            <div class="btn-group">
+                                                <a href="{{ url_for('main.view_incident', incident_id=incident.id) }}" class="btn btn-sm btn-outline-primary">
+                                                    <i class="fas fa-eye"></i>
+                                                </a>
+                                                <button type="button" class="btn btn-sm btn-outline-secondary">
+                                                    <i class="fas fa-edit"></i>
+                                                </button>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                    {% endfor %}
+                                {% else %}
+                                    <tr>
+                                        <td colspan="7" class="text-center py-4">
+                                            <div class="text-muted">
+                                                <i class="fas fa-folder-open fa-3x mb-3"></i>
+                                                <p>No incidents found</p>
+                                                <a href="{{ url_for('main.new_incident') }}" class="btn btn-sm btn-primary">
+                                                    Report an incident
+                                                </a>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                {% endif %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                {% if incidents and incidents|length > 10 %}
+                <div class="card-footer">
+                    <nav aria-label="Incidents pagination">
+                        <ul class="pagination justify-content-center mb-0">
+                            <li class="page-item disabled">
+                                <a class="page-link" href="#" tabindex="-1">Previous</a>
+                            </li>
+                            <li class="page-item active"><a class="page-link" href="#">1</a></li>
+                            <li class="page-item"><a class="page-link" href="#">2</a></li>
+                            <li class="page-item"><a class="page-link" href="#">3</a></li>
+                            <li class="page-item">
+                                <a class="page-link" href="#">Next</a>
+                            </li>
+                        </ul>
+                    </nav>
+                </div>
+                {% endif %}
+            </div>
+            
+            <!-- CLI command reference -->
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0">CLI Command Reference</h5>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <h6>View Incidents</h6>
+                            <div class="bg-dark p-2 rounded mb-3">
+                                <code class="text-light">python -m cli.commands incidents list</code>
+                            </div>
+                            
+                            <h6>View Incident Details</h6>
+                            <div class="bg-dark p-2 rounded mb-3">
+                                <code class="text-light">python -m cli.commands incidents view [ID]</code>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <h6>Create New Incident</h6>
+                            <div class="bg-dark p-2 rounded mb-3">
+                                <code class="text-light">python -m cli.commands incidents create</code>
+                            </div>
+                            
+                            <h6>Update Incident Status</h6>
+                            <div class="bg-dark p-2 rounded">
+                                <code class="text-light">python -m cli.commands incidents update [ID] --status [STATUS]</code>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

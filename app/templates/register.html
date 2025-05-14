@@ -1,0 +1,94 @@
+{% extends 'base.html' %}
+
+{% block title %}Register - Incident Response Tool{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8 col-lg-6">
+            <div class="card shadow-sm">
+                <div class="card-header bg-primary text-white">
+                    <h3 class="mb-0">Create an Account</h3>
+                </div>
+                <div class="card-body">
+                    <form method="POST" action="{{ url_for('auth.register') }}">
+                        <div class="mb-3">
+                            <label for="username" class="form-label">Username</label>
+                            <div class="input-group">
+                                <span class="input-group-text"><i class="fas fa-user"></i></span>
+                                <input type="text" class="form-control" id="username" name="username" required minlength="3" maxlength="64">
+                            </div>
+                            <div class="form-text">Choose a unique username (3-64 characters).</div>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="email" class="form-label">Email Address</label>
+                            <div class="input-group">
+                                <span class="input-group-text"><i class="fas fa-envelope"></i></span>
+                                <input type="email" class="form-control" id="email" name="email" required>
+                            </div>
+                            <div class="form-text">We'll never share your email with anyone else.</div>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="password" class="form-label">Password</label>
+                            <div class="input-group">
+                                <span class="input-group-text"><i class="fas fa-lock"></i></span>
+                                <input type="password" class="form-control" id="password" name="password" required minlength="8">
+                                <button class="btn btn-outline-secondary toggle-password" type="button" data-target="#password">
+                                    <i class="fas fa-eye"></i>
+                                </button>
+                            </div>
+                            <div class="form-text">
+                                Password must be at least 8 characters and include uppercase, lowercase, and numbers.
+                            </div>
+                            <div class="mt-2">
+                                <div class="progress">
+                                    <div id="password-strength" class="progress-bar" role="progressbar" style="width: 0%"></div>
+                                </div>
+                                <small id="password-strength-text" class="form-text"></small>
+                            </div>
+                        </div>
+                        
+                        <div class="mb-4">
+                            <label for="password_confirm" class="form-label">Confirm Password</label>
+                            <div class="input-group">
+                                <span class="input-group-text"><i class="fas fa-lock"></i></span>
+                                <input type="password" class="form-control" id="password_confirm" name="password_confirm" required minlength="8">
+                                <button class="btn btn-outline-secondary toggle-password" type="button" data-target="#password_confirm">
+                                    <i class="fas fa-eye"></i>
+                                </button>
+                            </div>
+                        </div>
+                        
+                        <div class="d-grid">
+                            <button type="submit" class="btn btn-primary btn-lg">Register</button>
+                        </div>
+                    </form>
+                </div>
+                <div class="card-footer text-center">
+                    <p class="mb-0">Already have an account? <a href="{{ url_for('auth.login') }}">Log in</a></p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Form validation
+        const form = document.querySelector('form');
+        const password = document.querySelector('#password');
+        const passwordConfirm = document.querySelector('#password_confirm');
+        
+        form.addEventListener('submit', function(event) {
+            if (password.value !== passwordConfirm.value) {
+                event.preventDefault();
+                alert('Passwords do not match!');
+            }
+        });
+    });
+</script>
+{% endblock %}

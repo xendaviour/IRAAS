@@ -1,0 +1,79 @@
+Sure! Here's a detailed breakdown of the **Problem Statement** from our chat:
+
+---
+
+## **Problem Statement:**
+
+### **Context and Objective:**
+
+The goal of this project is to create a **web-based Incident Response Tool** for cybersecurity. This tool is designed to facilitate streamlined, step-by-step responses to various types of cybersecurity incidents. A core part of this tool's functionality is user management, including **registration** and **login**, and **JWT token generation** to authenticate users when interacting with the system.
+
+While the **web UI** is functioning as expected for user registration and token generation, the same functionality is failing when attempted through the **CLI (Command-Line Interface)**. This issue lies primarily in generating the registration token and ensuring the database correctly stores and validates user credentials.
+
+### **Challenges Faced:**
+
+1. **User Registration and Token Generation (Web UI vs CLI)**:
+
+   * **Web UI**:
+
+     * User registration works as expected via the web interface. When a user registers, they are issued a **registration token**, which is successfully stored in the database.
+     * The user can then use this token to authenticate and log into the system.
+   * **CLI**:
+
+     * When trying to perform the same user registration and login actions through the **CLI**, the system fails to generate the **registration token**. This suggests that there may be discrepancies between how the registration process works via the web UI and CLI, especially in token generation or password hashing.
+
+2. **Authentication and Token Issues**:
+
+   * When trying to generate the registration token through CLI, the **password hashing** and **token generation** processes are not behaving as expected. This is likely due to **mismatched configurations** or missing imports in the CLI code.
+   * There were instances where tokens were **not being generated properly**, and as a result, the **database was not storing** these tokens correctly, or at all.
+
+3. **Schema and Database Issues**:
+
+   * **Missing Imports**: The error logs indicated that there were problems with **importing the `UserCreate` schema**, which is required for user registration. The system raised an `ImportError`, implying that either the schema wasn't defined properly or there was an incorrect reference in the code.
+   * The issue was specifically tied to the **CLI not being able to correctly handle schema references**, as evident from the errors such as:
+
+     ```
+     ImportError: cannot import name 'UserCreate' from 'app.schemas'
+     ```
+
+4. **Discrepancies Between UI and CLI Functionality**:
+
+   * While the **web UI** correctly generates registration tokens and allows users to log in, the **CLI fails to replicate** this behavior. This could be due to:
+
+     * Differences in how the **HTTP headers**, **cookies**, and **CSRF tokens** are handled between the web and CLI interactions.
+     * Possible **inconsistencies in request format** or **authentication flow** between the web interface and CLI.
+
+5. **Database Integration**:
+
+   * The **database** appears to be correctly set up to store user credentials, but issues with **schema imports** and **token generation** prevent the **registration token** from being stored properly during the registration process.
+   * A key part of the problem is determining if the token is being **saved in the database** correctly or if there’s an error in the flow that prevents the token from being properly committed.
+
+---
+
+### **Summary of Core Problems:**
+
+1. **Token Generation Discrepancies**: While token generation works through the **web UI**, it fails via **CLI**, likely due to issues with password hashing, token generation, or configuration mismatches between the two environments.
+
+2. **Missing or Incorrect Schema Imports**: Errors around importing the **UserCreate schema** indicate that there may be missing or incorrectly referenced files within the application code, leading to issues when trying to register a user.
+
+3. **Database Persistence Issues**: The **registration token** is potentially not being stored in the database due to issues in the schema or import logic. This is preventing the registration process from completing successfully via the CLI.
+
+4. **Inconsistencies in Web and CLI Workflow**: There is a functional difference between the web interface and CLI, where the web interface correctly handles token generation and login, but the CLI doesn't. This may involve missing or incorrect headers, cookies, or request formats for authentication.
+
+---
+
+### **Next Steps to Address the Problem:**
+
+1. **Investigate and Align Web UI and CLI Code**: Ensure that the **CLI registration process** mirrors the web UI process. This includes making sure that headers, cookies, and CSRF tokens are handled consistently across both environments.
+
+2. **Fix Schema Import Issues**: Resolve the **schema import errors** to ensure that the **UserCreate schema** and other required models are correctly defined and imported in the application.
+
+3. **Confirm Token Storage in Database**: Add logging or debug output to confirm that the registration token is being properly saved in the database during the registration process.
+
+4. **Refactor and Test the CLI Workflow**: Conduct a comprehensive review and test of the CLI registration and login process, ensuring that it functions identically to the web interface.
+
+---
+
+This detailed problem statement should provide a clear overview of the issue, allowing AI systems to understand the nature of the task and the path forward to resolving the problem.
+
+Let me know if you'd like further refinements or additional details!

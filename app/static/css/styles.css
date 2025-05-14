@@ -1,0 +1,159 @@
+/* Custom styles for the Incident Response Tool */
+
+/* Common spacing fixes */
+.mt-4 {
+    margin-top: 1.5rem;
+}
+
+.mb-4 {
+    margin-bottom: 1.5rem;
+}
+
+.py-5 {
+    padding-top: 3rem;
+    padding-bottom: 3rem;
+}
+
+/* Action buttons in incident steps */
+.step-actions {
+    display: flex;
+    gap: 0.5rem;
+}
+
+/* Incident severity badges */
+.severity-low {
+    background-color: var(--bs-success);
+}
+
+.severity-medium {
+    background-color: var(--bs-warning);
+}
+
+.severity-high {
+    background-color: var(--bs-danger);
+}
+
+.severity-critical {
+    background-color: var(--bs-danger);
+    border: 2px solid white;
+}
+
+/* Incident status badges */
+.status-new {
+    background-color: var(--bs-primary);
+}
+
+.status-investigating {
+    background-color: var(--bs-warning);
+}
+
+.status-resolved {
+    background-color: var(--bs-success);
+}
+
+.status-closed {
+    background-color: var(--bs-secondary);
+}
+
+/* Step completion styling */
+.step-completed {
+    text-decoration: line-through;
+    opacity: 0.8;
+}
+
+/* Card hover effects */
+.incident-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    transition: all 0.3s ease;
+}
+
+/* Hero section on home page */
+.hero {
+    padding: 5rem 0;
+    background-color: var(--bs-dark);
+    color: white;
+}
+
+.hero h1 {
+    font-size: 3rem;
+    font-weight: 700;
+    margin-bottom: 1.5rem;
+}
+
+/* Sidebar navigation */
+.sidebar {
+    min-height: calc(100vh - 56px);
+    background-color: var(--bs-dark);
+    padding-top: 1rem;
+}
+
+.sidebar-link {
+    color: rgba(255, 255, 255, 0.8);
+    padding: 0.5rem 1rem;
+    display: block;
+    text-decoration: none;
+}
+
+.sidebar-link:hover, .sidebar-link.active {
+    color: #fff;
+    background-color: rgba(255, 255, 255, 0.1);
+}
+
+/* Form styling */
+.auth-form {
+    max-width: 450px;
+    margin: 0 auto;
+    padding: 2rem;
+    border-radius: 0.5rem;
+    background-color: var(--bs-dark);
+}
+
+/* Loading spinner */
+.spinner-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 9999;
+}
+
+.timeline {
+    position: relative;
+    padding: 1rem 0;
+}
+
+.timeline-line {
+    position: absolute;
+    left: 20px;
+    top: 0;
+    bottom: 0;
+    width: 2px;
+    background-color: var(--bs-primary);
+}
+
+.timeline-item {
+    position: relative;
+    padding-left: 50px;
+    margin-bottom: 1.5rem;
+}
+
+.timeline-item:before {
+    content: '';
+    position: absolute;
+    left: 14px;
+    top: 0;
+    width: 14px;
+    height: 14px;
+    border-radius: 50%;
+    background-color: var(--bs-primary);
+}
+
+.timeline-item.completed:before {
+    background-color: var(--bs-success);
+}

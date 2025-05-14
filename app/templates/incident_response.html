@@ -1,0 +1,386 @@
+{% extends 'base.html' %}
+
+{% block title %}
+    {% if incident %}
+        Incident #{{ incident.id }} - {{ incident.title }}
+    {% else %}
+        New Incident - Incident Response Tool
+    {% endif %}
+{% endblock %}
+
+{% block content %}
+<div class="container-fluid py-4">
+    <div class="row">
+        <div class="col-lg-3 col-xl-2">
+            <!-- Sidebar navigation -->
+            <div class="list-group mb-4">
+                <a href="{{ url_for('main.dashboard') }}" class="list-group-item list-group-item-action">
+                    <i class="fas fa-tachometer-alt me-2"></i>Dashboard
+                </a>
+                <a href="{{ url_for('main.new_incident') }}" class="list-group-item list-group-item-action {% if not incident %}active{% endif %}">
+                    <i class="fas fa-plus-circle me-2"></i>New Incident
+                </a>
+                <a href="#" class="list-group-item list-group-item-action">
+                    <i class="fas fa-search me-2"></i>Search Incidents
+                </a>
+                <a href="{{ url_for('main.list_templates') }}" class="list-group-item list-group-item-action">
+                    <i class="fas fa-clipboard-list me-2"></i>Templates
+                </a>
+                {% if incident %}
+                <a href="#" class="list-group-item list-group-item-action active">
+                    <i class="fas fa-shield-alt me-2"></i>Incident #{{ incident.id }}
+                </a>
+                {% endif %}
+            </div>
+        </div>
+        
+        <div class="col-lg-9 col-xl-10">
+            <!-- Incident Form or Details -->
+            {% if not incident %}
+                <!-- New Incident Form -->
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="card-title">Report New Incident</h3>
+                    </div>
+                    <div class="card-body">
+                        <form method="POST" action="{{ url_for('main.new_incident') }}">
+                            <div class="row mb-3">
+                                <div class="col-md-8">
+                                    <label for="title" class="form-label">Incident Title</label>
+                                    <input type="text" class="form-control" id="title" name="title" required>
+                                </div>
+                                <div class="col-md-4">
+                                    <label for="severity" class="form-label">Severity</label>
+                                    <select class="form-select" id="severity" name="severity" required>
+                                        <option value="Low">Low</option>
+                                        <option value="Medium" selected>Medium</option>
+                                        <option value="High">High</option>
+                                        <option value="Critical">Critical</option>
+                                    </select>
+                                </div>
+                            </div>
+                            
+                            <div class="row mb-3">
+                                <div class="col-md-6">
+                                    <label for="incident_type" class="form-label">Incident Type</label>
+                                    <select class="form-select" id="incident_type" name="incident_type" required>
+                                        <option value="" selected disabled>Select type...</option>
+                                        <option value="Malware">Malware</option>
+                                        <option value="Phishing">Phishing</option>
+                                        <option value="Data Breach">Data Breach</option>
+                                        <option value="DDoS">DDoS</option>
+                                        <option value="Unauthorized Access">Unauthorized Access</option>
+                                        <option value="Social Engineering">Social Engineering</option>
+                                        <option value="Insider Threat">Insider Threat</option>
+                                        <option value="Ransomware">Ransomware</option>
+                                        <option value="Other">Other</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-6">
+                                    <label for="template_id" class="form-label">Response Template (Optional)</label>
+                                    <select class="form-select" id="template_id" name="template_id">
+                                        <option value="">None (Custom Response)</option>
+                                        {% for template in templates %}
+                                        <option value="{{ template.id }}" data-type="{{ template.incident_type }}">
+                                            {{ template.name }}
+                                        </option>
+                                        {% endfor %}
+                                    </select>
+                                </div>
+                            </div>
+                            
+                            <div class="mb-3">
+                                <label for="description" class="form-label">Incident Description</label>
+                                <textarea class="form-control" id="description" name="description" rows="5"></textarea>
+                            </div>
+                            
+                            <div class="d-flex justify-content-between">
+                                <a href="{{ url_for('main.dashboard') }}" class="btn btn-secondary">Cancel</a>
+                                <button type="submit" class="btn btn-primary">Create Incident</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            {% else %}
+                <!-- Incident Details -->
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                    <h2 class="h3">
+                        Incident #{{ incident.id }}: {{ incident.title }}
+                        <span class="badge severity-{{ incident.severity.lower() }}">{{ incident.severity }}</span>
+                        <span class="badge status-{{ incident.status.lower() }}">{{ incident.status }}</span>
+                    </h2>
+                    <div class="btn-group">
+                        <a href="{{ url_for('main.dashboard') }}" class="btn btn-outline-secondary">
+                            <i class="fas fa-arrow-left me-1"></i> Back
+                        </a>
+                        <button type="button" class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#updateIncidentModal">
+                            <i class="fas fa-edit me-1"></i> Edit
+                        </button>
+                    </div>
+                </div>
+                
+                <!-- Incident Info Card -->
+                <div class="card mb-4">
+                    <div class="card-header">
+                        <h5 class="mb-0">Incident Information</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <dl class="row">
+                                    <dt class="col-sm-4">Type:</dt>
+                                    <dd class="col-sm-8">{{ incident.incident_type }}</dd>
+                                    
+                                    <dt class="col-sm-4">Status:</dt>
+                                    <dd class="col-sm-8">
+                                        <span class="badge status-{{ incident.status.lower() }}">{{ incident.status }}</span>
+                                    </dd>
+                                    
+                                    <dt class="col-sm-4">Severity:</dt>
+                                    <dd class="col-sm-8">
+                                        <span class="badge severity-{{ incident.severity.lower() }}">{{ incident.severity }}</span>
+                                    </dd>
+                                </dl>
+                            </div>
+                            <div class="col-md-6">
+                                <dl class="row">
+                                    <dt class="col-sm-4">Created:</dt>
+                                    <dd class="col-sm-8">{{ incident.created_at.strftime('%Y-%m-%d %H:%M') }}</dd>
+                                    
+                                    <dt class="col-sm-4">Updated:</dt>
+                                    <dd class="col-sm-8">{{ incident.updated_at.strftime('%Y-%m-%d %H:%M') }}</dd>
+                                    
+                                    <dt class="col-sm-4">Reported by:</dt>
+                                    <dd class="col-sm-8">{{ current_user.username }}</dd>
+                                </dl>
+                            </div>
+                        </div>
+                        
+                        <hr class="my-3">
+                        
+                        <h6>Description:</h6>
+                        <p>{{ incident.description or 'No description provided.' }}</p>
+                    </div>
+                </div>
+                
+                <!-- Response Steps Card -->
+                <div class="card mb-4">
+                    <div class="card-header d-flex justify-content-between align-items-center">
+                        <h5 class="mb-0">Response Steps</h5>
+                        <button type="button" class="btn btn-sm btn-primary" data-bs-toggle="modal" data-bs-target="#addStepModal">
+                            <i class="fas fa-plus me-1"></i> Add Step
+                        </button>
+                    </div>
+                    <div class="card-body p-0">
+                        <div class="list-group list-group-flush">
+                            {% if responses %}
+                                {% for step in responses %}
+                                <div class="list-group-item">
+                                    <div class="d-flex w-100 justify-content-between align-items-center">
+                                        <h6 class="mb-1" id="step-text-{{ step.id }}" class="{% if step.completed %}step-completed{% endif %}">
+                                            <span class="badge bg-primary me-2">{{ step.step_number }}</span>
+                                            {{ step.action }}
+                                        </h6>
+                                        <div class="d-flex align-items-center">
+                                            <div class="form-check form-switch me-2">
+                                                <form id="step-form-{{ step.id }}" method="POST" action="{{ url_for('main.update_response_step', incident_id=incident.id, step_id=step.id) }}" class="no-spinner">
+                                                    <input type="hidden" name="action" value="{{ step.action }}">
+                                                    <input type="hidden" name="notes" value="{{ step.notes }}">
+                                                    <input class="form-check-input step-completion" type="checkbox" role="switch" 
+                                                           name="completed" {% if step.completed %}checked{% endif %}
+                                                           data-step-id="{{ step.id }}" data-incident-id="{{ incident.id }}">
+                                                </form>
+                                            </div>
+                                            <button class="btn btn-sm btn-outline-secondary" data-bs-toggle="collapse" 
+                                                    data-bs-target="#stepDetails{{ step.id }}" aria-expanded="false">
+                                                <i class="fas fa-chevron-down"></i>
+                                            </button>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="collapse mt-2" id="stepDetails{{ step.id }}">
+                                        <div class="card card-body bg-dark">
+                                            <p class="mb-2"><strong>Notes:</strong></p>
+                                            <p class="mb-3">{{ step.notes or 'No notes provided.' }}</p>
+                                            
+                                            <div class="d-flex justify-content-between align-items-center">
+                                                <small class="text-muted">
+                                                    {% if step.completed %}
+                                                    Completed on: {{ step.completed_at.strftime('%Y-%m-%d %H:%M') }}
+                                                    {% else %}
+                                                    Status: Pending
+                                                    {% endif %}
+                                                </small>
+                                                <button type="button" class="btn btn-sm btn-outline-primary"
+                                                        data-bs-toggle="modal" data-bs-target="#editStepModal{{ step.id }}">
+                                                    <i class="fas fa-edit me-1"></i> Edit
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <!-- Edit Step Modal -->
+                                <div class="modal fade" id="editStepModal{{ step.id }}" tabindex="-1" aria-hidden="true">
+                                    <div class="modal-dialog">
+                                        <div class="modal-content">
+                                            <div class="modal-header">
+                                                <h5 class="modal-title">Edit Response Step</h5>
+                                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                            </div>
+                                            <div class="modal-body">
+                                                <form method="POST" action="{{ url_for('main.update_response_step', incident_id=incident.id, step_id=step.id) }}">
+                                                    <div class="mb-3">
+                                                        <label for="action{{ step.id }}" class="form-label">Action</label>
+                                                        <input type="text" class="form-control" id="action{{ step.id }}" name="action" 
+                                                               value="{{ step.action }}" required>
+                                                    </div>
+                                                    <div class="mb-3">
+                                                        <label for="notes{{ step.id }}" class="form-label">Notes</label>
+                                                        <textarea class="form-control" id="notes{{ step.id }}" name="notes" rows="3">{{ step.notes }}</textarea>
+                                                    </div>
+                                                    <div class="mb-3 form-check">
+                                                        <input type="checkbox" class="form-check-input" id="completed{{ step.id }}" 
+                                                               name="completed" {% if step.completed %}checked{% endif %}>
+                                                        <label class="form-check-label" for="completed{{ step.id }}">Mark as completed</label>
+                                                    </div>
+                                                    <div class="d-flex justify-content-end">
+                                                        <button type="button" class="btn btn-secondary me-2" data-bs-dismiss="modal">Cancel</button>
+                                                        <button type="submit" class="btn btn-primary">Save Changes</button>
+                                                    </div>
+                                                </form>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                {% endfor %}
+                            {% else %}
+                                <div class="text-center py-5">
+                                    <i class="fas fa-tasks fa-3x text-muted mb-3"></i>
+                                    <p class="lead text-muted">No response steps added yet.</p>
+                                    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addStepModal">
+                                        <i class="fas fa-plus me-1"></i> Add First Step
+                                    </button>
+                                </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- CLI Command Reference Card -->
+                <div class="card">
+                    <div class="card-header">
+                        <h5 class="mb-0">CLI Command Reference</h5>
+                    </div>
+                    <div class="card-body">
+                        <h6>View This Incident</h6>
+                        <div class="bg-dark p-2 rounded mb-3">
+                            <code class="text-light">python -m cli.commands incidents view {{ incident.id }}</code>
+                            <button class="btn btn-sm btn-outline-light float-end copy-to-clipboard" 
+                                    data-clipboard-text="python -m cli.commands incidents view {{ incident.id }}">
+                                <i class="fas fa-copy"></i>
+                            </button>
+                        </div>
+                        
+                        <h6>Update Status</h6>
+                        <div class="bg-dark p-2 rounded mb-3">
+                            <code class="text-light">python -m cli.commands incidents update {{ incident.id }} --status [STATUS]</code>
+                            <button class="btn btn-sm btn-outline-light float-end copy-to-clipboard"
+                                    data-clipboard-text="python -m cli.commands incidents update {{ incident.id }} --status [STATUS]">
+                                <i class="fas fa-copy"></i>
+                            </button>
+                        </div>
+                        
+                        <h6>Add Response Step</h6>
+                        <div class="bg-dark p-2 rounded">
+                            <code class="text-light">python -m cli.commands incidents add-step {{ incident.id }} --action "Step description"</code>
+                            <button class="btn btn-sm btn-outline-light float-end copy-to-clipboard"
+                                    data-clipboard-text="python -m cli.commands incidents add-step {{ incident.id }} --action 'Step description'">
+                                <i class="fas fa-copy"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Update Incident Modal -->
+                <div class="modal fade" id="updateIncidentModal" tabindex="-1" aria-hidden="true">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title">Update Incident</h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                            </div>
+                            <div class="modal-body">
+                                <form method="POST" action="{{ url_for('main.update_incident', incident_id=incident.id) }}">
+                                    <div class="mb-3">
+                                        <label for="edit_title" class="form-label">Title</label>
+                                        <input type="text" class="form-control" id="edit_title" name="title" value="{{ incident.title }}" required>
+                                    </div>
+                                    <div class="row mb-3">
+                                        <div class="col-md-6">
+                                            <label for="edit_severity" class="form-label">Severity</label>
+                                            <select class="form-select" id="edit_severity" name="severity">
+                                                <option value="Low" {% if incident.severity == 'Low' %}selected{% endif %}>Low</option>
+                                                <option value="Medium" {% if incident.severity == 'Medium' %}selected{% endif %}>Medium</option>
+                                                <option value="High" {% if incident.severity == 'High' %}selected{% endif %}>High</option>
+                                                <option value="Critical" {% if incident.severity == 'Critical' %}selected{% endif %}>Critical</option>
+                                            </select>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <label for="edit_status" class="form-label">Status</label>
+                                            <select class="form-select" id="edit_status" name="status">
+                                                <option value="New" {% if incident.status == 'New' %}selected{% endif %}>New</option>
+                                                <option value="Investigating" {% if incident.status == 'Investigating' %}selected{% endif %}>Investigating</option>
+                                                <option value="Resolved" {% if incident.status == 'Resolved' %}selected{% endif %}>Resolved</option>
+                                                <option value="Closed" {% if incident.status == 'Closed' %}selected{% endif %}>Closed</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="edit_description" class="form-label">Description</label>
+                                        <textarea class="form-control" id="edit_description" name="description" rows="4">{{ incident.description }}</textarea>
+                                    </div>
+                                    <div class="d-flex justify-content-end">
+                                        <button type="button" class="btn btn-secondary me-2" data-bs-dismiss="modal">Cancel</button>
+                                        <button type="submit" class="btn btn-primary">Save Changes</button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Add Step Modal -->
+                <div class="modal fade" id="addStepModal" tabindex="-1" aria-hidden="true">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title">Add Response Step</h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                            </div>
+                            <div class="modal-body">
+                                <form method="POST" action="{{ url_for('main.add_response_step', incident_id=incident.id) }}">
+                                    <div class="mb-3">
+                                        <label for="action" class="form-label">Action</label>
+                                        <input type="text" class="form-control" id="action" name="action" required
+                                               placeholder="e.g., Isolate affected system from the network">
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="notes" class="form-label">Notes</label>
+                                        <textarea class="form-control" id="notes" name="notes" rows="3"
+                                                 placeholder="Additional details, instructions, or observations..."></textarea>
+                                    </div>
+                                    <div class="d-flex justify-content-end">
+                                        <button type="button" class="btn btn-secondary me-2" data-bs-dismiss="modal">Cancel</button>
+                                        <button type="submit" class="btn btn-primary">Add Step</button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}

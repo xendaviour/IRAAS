@@ -1,0 +1,189 @@
+{% extends 'base.html' %}
+
+{% block title %}Incident Response Tool - Home{% endblock %}
+
+{% block content %}
+<!-- Hero Section -->
+<section class="hero">
+    <div class="container">
+        <div class="row align-items-center">
+            <div class="col-lg-6">
+                <h1>Streamline Your Cybersecurity Incident Response</h1>
+                <p class="lead mb-4">
+                    A comprehensive tool for security teams to efficiently manage and respond to cybersecurity incidents.
+                </p>
+                <div class="d-grid gap-2 d-md-flex justify-content-md-start">
+                    {% if current_user.is_authenticated %}
+                    <a href="{{ url_for('main.dashboard') }}" class="btn btn-primary btn-lg px-4 me-md-2">Go to Dashboard</a>
+                    <a href="{{ url_for('main.new_incident') }}" class="btn btn-outline-light btn-lg px-4">Report Incident</a>
+                    {% else %}
+                    <a href="{{ url_for('auth.register') }}" class="btn btn-primary btn-lg px-4 me-md-2">Get Started</a>
+                    <a href="{{ url_for('auth.login') }}" class="btn btn-outline-light btn-lg px-4">Log In</a>
+                    {% endif %}
+                </div>
+            </div>
+            <div class="col-lg-6 d-none d-lg-block">
+                <!-- SVG illustration -->
+                <svg class="img-fluid" viewBox="0 0 500 400" xmlns="http://www.w3.org/2000/svg">
+                    <style>
+                        .st0{fill:#3a86ff}.st1{fill:#8338ec}.st2{fill:#ffbe0b}.st3{fill:#ff006e}.st4{fill:#ffffff;opacity:0.1}
+                    </style>
+                    <circle class="st4" cx="250" cy="200" r="160"/>
+                    <path class="st0" d="M250,85c-63.5,0-115,51.5-115,115s51.5,115,115,115s115-51.5,115-115S313.5,85,250,85z M250,285 c-46.9,0-85-38.1-85-85s38.1-85,85-85s85,38.1,85,85S296.9,285,250,285z"/>
+                    <path class="st1" d="M250,130c-38.7,0-70,31.3-70,70s31.3,70,70,70s70-31.3,70-70S288.7,130,250,130z M250,240 c-22.1,0-40-17.9-40-40s17.9-40,40-40s40,17.9,40,40S272.1,240,250,240z"/>
+                    <path class="st2" d="M250,160c-22.1,0-40,17.9-40,40s17.9,40,40,40s40-17.9,40-40S272.1,160,250,160z M250,220 c-11,0-20-9-20-20s9-20,20-20s20,9,20,20S261,220,250,220z"/>
+                    <path class="st3" d="M250,185c-8.3,0-15,6.7-15,15s6.7,15,15,15s15-6.7,15-15S258.3,185,250,185z"/>
+                    <path class="st0" d="M310,160l20-30h30l-30,40l20,30h-30L310,160z"/>
+                    <path class="st1" d="M190,160l-20-30h-30l30,40l-20,30h30L190,160z"/>
+                    <path class="st2" d="M250,130l-20-40h40L250,130z"/>
+                    <path class="st3" d="M250,270l20,40h-40L250,270z"/>
+                </svg>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Features Section -->
+<section class="py-5 bg-dark">
+    <div class="container">
+        <div class="row text-center mb-5">
+            <div class="col-lg-8 mx-auto">
+                <h2 class="fw-bold">Key Features</h2>
+                <p class="lead">Our tool provides everything you need to handle security incidents effectively.</p>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-lg-4 mb-4">
+                <div class="card h-100 border-0 shadow-sm">
+                    <div class="card-body text-center p-4">
+                        <div class="mb-3">
+                            <i class="fas fa-clipboard-list fa-3x text-primary"></i>
+                        </div>
+                        <h4 class="fw-bold">Structured Response</h4>
+                        <p class="text-muted">
+                            Follow organized step-by-step response procedures for various incident types.
+                        </p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-4 mb-4">
+                <div class="card h-100 border-0 shadow-sm">
+                    <div class="card-body text-center p-4">
+                        <div class="mb-3">
+                            <i class="fas fa-terminal fa-3x text-primary"></i>
+                        </div>
+                        <h4 class="fw-bold">CLI Integration</h4>
+                        <p class="text-muted">
+                            Manage incidents through both web interface and command-line for flexible operations.
+                        </p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-4 mb-4">
+                <div class="card h-100 border-0 shadow-sm">
+                    <div class="card-body text-center p-4">
+                        <div class="mb-3">
+                            <i class="fas fa-shield-alt fa-3x text-primary"></i>
+                        </div>
+                        <h4 class="fw-bold">Secure Access</h4>
+                        <p class="text-muted">
+                            Role-based access controls with secure authentication and token validation.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- How It Works Section -->
+<section class="py-5">
+    <div class="container">
+        <div class="row text-center mb-5">
+            <div class="col-lg-8 mx-auto">
+                <h2 class="fw-bold">How It Works</h2>
+                <p class="lead">Our incident response process is designed to be efficient and effective.</p>
+            </div>
+        </div>
+        
+        <div class="row">
+            <div class="col-md-12">
+                <div class="timeline">
+                    <div class="timeline-line"></div>
+                    
+                    <div class="timeline-item">
+                        <div class="card mb-3">
+                            <div class="card-body">
+                                <h4 class="card-title"><span class="badge bg-primary me-2">1</span> Report Incident</h4>
+                                <p class="card-text">
+                                    Document the initial incident details including type, severity, and affected systems.
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="timeline-item">
+                        <div class="card mb-3">
+                            <div class="card-body">
+                                <h4 class="card-title"><span class="badge bg-primary me-2">2</span> Deploy Response Template</h4>
+                                <p class="card-text">
+                                    Select from pre-defined response templates or create custom response plans.
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="timeline-item">
+                        <div class="card mb-3">
+                            <div class="card-body">
+                                <h4 class="card-title"><span class="badge bg-primary me-2">3</span> Execute Response Steps</h4>
+                                <p class="card-text">
+                                    Follow the structured steps to contain, eradicate, and recover from the incident.
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="timeline-item">
+                        <div class="card mb-3">
+                            <div class="card-body">
+                                <h4 class="card-title"><span class="badge bg-primary me-2">4</span> Document Findings</h4>
+                                <p class="card-text">
+                                    Record all actions, findings, and evidence throughout the response process.
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="timeline-item completed">
+                        <div class="card">
+                            <div class="card-body">
+                                <h4 class="card-title"><span class="badge bg-success me-2">5</span> Review and Improve</h4>
+                                <p class="card-text">
+                                    Conduct post-incident reviews to improve future response processes.
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- CTA Section -->
+<section class="py-5 bg-primary text-white">
+    <div class="container text-center">
+        <h2 class="fw-bold mb-4">Ready to strengthen your incident response?</h2>
+        <p class="lead mb-4">Sign up now and take control of your security incidents.</p>
+        <div class="d-grid gap-2 d-sm-flex justify-content-sm-center">
+            {% if current_user.is_authenticated %}
+            <a href="{{ url_for('main.dashboard') }}" class="btn btn-light btn-lg px-4 gap-3">Go to Dashboard</a>
+            {% else %}
+            <a href="{{ url_for('auth.register') }}" class="btn btn-light btn-lg px-4 gap-3">Get Started</a>
+            <a href="{{ url_for('auth.login') }}" class="btn btn-outline-light btn-lg px-4">Log In</a>
+            {% endif %}
+        </div>
+    </div>
+</section>
+{% endblock %}

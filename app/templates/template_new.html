@@ -1,0 +1,112 @@
+{% extends 'base.html' %}
+
+{% block title %}Create Template - Incident Response Tool{% endblock %}
+
+{% block content %}
+<div class="container-fluid py-4">
+    <div class="row">
+        <div class="col-lg-3 col-xl-2">
+            <!-- Sidebar navigation -->
+            <div class="list-group mb-4">
+                <a href="{{ url_for('main.dashboard') }}" class="list-group-item list-group-item-action">
+                    <i class="fas fa-tachometer-alt me-2"></i>Dashboard
+                </a>
+                <a href="{{ url_for('main.new_incident') }}" class="list-group-item list-group-item-action">
+                    <i class="fas fa-plus-circle me-2"></i>New Incident
+                </a>
+                <a href="#" class="list-group-item list-group-item-action">
+                    <i class="fas fa-search me-2"></i>Search Incidents
+                </a>
+                <a href="{{ url_for('main.list_templates') }}" class="list-group-item list-group-item-action">
+                    <i class="fas fa-clipboard-list me-2"></i>Templates
+                </a>
+                <a href="#" class="list-group-item list-group-item-action active">
+                    <i class="fas fa-plus me-2"></i>New Template
+                </a>
+            </div>
+        </div>
+        
+        <div class="col-lg-9 col-xl-10">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h2 class="h3">Create New Response Template</h2>
+                <a href="{{ url_for('main.list_templates') }}" class="btn btn-outline-secondary">
+                    <i class="fas fa-arrow-left me-1"></i> Back to Templates
+                </a>
+            </div>
+            
+            <!-- New Template Form -->
+            <div class="card">
+                <div class="card-body">
+                    <form method="POST" action="{{ url_for('main.new_template') }}">
+                        <div class="mb-3">
+                            <label for="name" class="form-label">Template Name</label>
+                            <input type="text" class="form-control" id="name" name="name" required>
+                            <div class="form-text">Give your template a descriptive name</div>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="incident_type" class="form-label">Incident Type</label>
+                            <select class="form-select" id="incident_type" name="incident_type" required>
+                                <option value="" selected disabled>Select type...</option>
+                                <option value="Malware">Malware</option>
+                                <option value="Phishing">Phishing</option>
+                                <option value="Data Breach">Data Breach</option>
+                                <option value="DDoS">DDoS</option>
+                                <option value="Unauthorized Access">Unauthorized Access</option>
+                                <option value="Social Engineering">Social Engineering</option>
+                                <option value="Insider Threat">Insider Threat</option>
+                                <option value="Ransomware">Ransomware</option>
+                                <option value="Other">Other</option>
+                            </select>
+                            <div class="form-text">The type of incident this template is designed for</div>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="description" class="form-label">Description</label>
+                            <textarea class="form-control" id="description" name="description" rows="4"></textarea>
+                            <div class="form-text">Provide a detailed description of when to use this template</div>
+                        </div>
+                        
+                        <div class="d-flex justify-content-between">
+                            <a href="{{ url_for('main.list_templates') }}" class="btn btn-secondary">Cancel</a>
+                            <button type="submit" class="btn btn-primary">Create Template</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+            
+            <!-- Template Creation Tips -->
+            <div class="card mt-4">
+                <div class="card-header">
+                    <h5 class="mb-0">Tips for Creating Effective Templates</h5>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-4">
+                            <div class="mb-3">
+                                <i class="fas fa-check-circle text-success fa-2x mb-2"></i>
+                                <h6>Be Specific</h6>
+                                <p class="small">Create templates for specific incident types with clear, actionable steps.</p>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="mb-3">
+                                <i class="fas fa-tasks text-primary fa-2x mb-2"></i>
+                                <h6>Sequential Steps</h6>
+                                <p class="small">Order steps in a logical sequence from containment to recovery.</p>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="mb-3">
+                                <i class="fas fa-file-alt text-info fa-2x mb-2"></i>
+                                <h6>Include References</h6>
+                                <p class="small">Reference relevant procedures, tools, and documentation in your steps.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
